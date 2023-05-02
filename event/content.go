@@ -80,27 +80,15 @@ var TypeMap = map[Type]reflect.Type{
 
 	ToDeviceOrgMatrixRoomKeyWithheld: reflect.TypeOf(RoomKeyWithheldEventContent{}),
 
-	CallInvite:       reflect.TypeOf(CallInviteEventContent{}),
-	CallCandidates:   reflect.TypeOf(CallCandidatesEventContent{}),
-	CallAnswer:       reflect.TypeOf(CallAnswerEventContent{}),
-	CallReject:       reflect.TypeOf(CallRejectEventContent{}),
-	CallSelectAnswer: reflect.TypeOf(CallSelectAnswerEventContent{}),
-	CallNegotiate:    reflect.TypeOf(CallNegotiateEventContent{}),
-	CallHangup:       reflect.TypeOf(CallHangupEventContent{}),
-
-	ToDeviceCallInvite:       reflect.TypeOf(CallInviteEventContent{}),
-	ToDeviceCallCandidates:   reflect.TypeOf(CallCandidatesEventContent{}),
-	ToDeviceCallAnswer:       reflect.TypeOf(CallAnswerEventContent{}),
-	ToDeviceCallReject:       reflect.TypeOf(CallRejectEventContent{}),
-	ToDeviceCallSelectAnswer: reflect.TypeOf(CallSelectAnswerEventContent{}),
-	ToDeviceCallNegotiate:    reflect.TypeOf(CallNegotiateEventContent{}),
-	ToDeviceCallHangup:       reflect.TypeOf(CallHangupEventContent{}),
-
-	FocusCallTrackSubscription:        reflect.TypeOf(FocusCallTrackSubscriptionEventContent{}),
-	FocusCallNegotiate:                reflect.TypeOf(FocusCallNegotiateEventContent{}),
-	FocusCallSDPStreamMetadataChanged: reflect.TypeOf(FocusCallSDPStreamMetadataChangedEventContent{}),
-	FocusCallPing:                     reflect.TypeOf(FocusCallPingEventContent{}),
-	FocusCallPong:                     reflect.TypeOf(FocusCallPongEventContent{}),
+	ToDeviceCallInvite:            reflect.TypeOf(CallInviteEventContent{}),         // initiate s start of a call with another party
+	ToDeviceCallCandidates:        reflect.TypeOf(CallCandidatesEventContent{}),     // exchange ICE
+	ToDeviceCallSelectAnswer:      reflect.TypeOf(CallSelectAnswerEventContent{}),   // confirm or accept a call in full-mesh
+	ToDeviceCallNegotiate:         reflect.TypeOf(CallNegotiateEventContent{}),      // SDP offer/answer
+	ToDeviceCallTrackSubscription: reflect.TypeOf(CallSubscriptionEventContent{}),   // subscribe/unsubscribe
+	ToDeviceCallTrackAdvertise:    reflect.TypeOf(CallTrackAdvertiseEventContent{}), // advertise available tracks to others
+	ToDeviceCallPing:              reflect.TypeOf(CallPingEventContent{}),           // ping
+	ToDeviceCallPong:              reflect.TypeOf(CallPongEventContent{}),           // pong
+	ToDeviceCallHangup:            reflect.TypeOf(CallHangupEventContent{}),         // end an initiated call
 }
 
 // Content stores the content of a Matrix event.
@@ -475,20 +463,6 @@ func (content *Content) AsCallCandidates() *CallCandidatesEventContent {
 	}
 	return casted
 }
-func (content *Content) AsCallAnswer() *CallAnswerEventContent {
-	casted, ok := content.Parsed.(*CallAnswerEventContent)
-	if !ok {
-		return &CallAnswerEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsCallReject() *CallRejectEventContent {
-	casted, ok := content.Parsed.(*CallRejectEventContent)
-	if !ok {
-		return &CallRejectEventContent{}
-	}
-	return casted
-}
 func (content *Content) AsCallSelectAnswer() *CallSelectAnswerEventContent {
 	casted, ok := content.Parsed.(*CallSelectAnswerEventContent)
 	if !ok {
@@ -503,45 +477,24 @@ func (content *Content) AsCallNegotiate() *CallNegotiateEventContent {
 	}
 	return casted
 }
+func (content *Content) AsCallSubscription() *CallSubscriptionEventContent {
+	casted, ok := content.Parsed.(*CallSubscriptionEventContent)
+	if !ok {
+		return &CallSubscriptionEventContent{}
+	}
+	return casted
+}
+func (content *Content) AsCallTrackAdvertise() *CallTrackAdvertiseEventContent {
+	casted, ok := content.Parsed.(*CallTrackAdvertiseEventContent)
+	if !ok {
+		return &CallTrackAdvertiseEventContent{}
+	}
+	return casted
+}
 func (content *Content) AsCallHangup() *CallHangupEventContent {
 	casted, ok := content.Parsed.(*CallHangupEventContent)
 	if !ok {
 		return &CallHangupEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsFocusCallTrackSubscription() *FocusCallTrackSubscriptionEventContent {
-	casted, ok := content.Parsed.(*FocusCallTrackSubscriptionEventContent)
-	if !ok {
-		return &FocusCallTrackSubscriptionEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsFocusCallNegotiate() *FocusCallNegotiateEventContent {
-	casted, ok := content.Parsed.(*FocusCallNegotiateEventContent)
-	if !ok {
-		return &FocusCallNegotiateEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsFocusCallSDPStreamMetadataChanged() *FocusCallSDPStreamMetadataChangedEventContent {
-	casted, ok := content.Parsed.(*FocusCallSDPStreamMetadataChangedEventContent)
-	if !ok {
-		return &FocusCallSDPStreamMetadataChangedEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsFocusCallPing() *FocusCallPingEventContent {
-	casted, ok := content.Parsed.(*FocusCallPingEventContent)
-	if !ok {
-		return &FocusCallPingEventContent{}
-	}
-	return casted
-}
-func (content *Content) AsFocusCallPong() *FocusCallPongEventContent {
-	casted, ok := content.Parsed.(*FocusCallPongEventContent)
-	if !ok {
-		return &FocusCallPongEventContent{}
 	}
 	return casted
 }

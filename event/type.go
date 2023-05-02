@@ -33,8 +33,6 @@ func (tc TypeClass) Name() string {
 		return "account data"
 	case ToDeviceEventType:
 		return "to-device"
-	case FocusEventType:
-		return "focus"
 	default:
 		return "unknown"
 	}
@@ -53,8 +51,6 @@ const (
 	AccountDataEventType
 	// Device-to-device events
 	ToDeviceEventType
-	// Focus events
-	FocusEventType
 )
 
 type Type struct {
@@ -84,24 +80,10 @@ func (et *Type) IsToDevice() bool {
 	return et.Class == ToDeviceEventType
 }
 
-func (et *Type) IsFocus() bool {
-	return et.Class == FocusEventType
-}
-
 func (et *Type) IsInRoomVerification() bool {
 	switch et.Type {
 	case InRoomVerificationStart.Type, InRoomVerificationReady.Type, InRoomVerificationAccept.Type,
 		InRoomVerificationKey.Type, InRoomVerificationMAC.Type, InRoomVerificationCancel.Type:
-		return true
-	default:
-		return false
-	}
-}
-
-func (et *Type) IsCall() bool {
-	switch et.Type {
-	case CallInvite.Type, CallCandidates.Type, CallAnswer.Type, CallReject.Type, CallSelectAnswer.Type,
-		CallNegotiate.Type, CallHangup.Type:
 		return true
 	default:
 		return false
@@ -129,13 +111,12 @@ func (et *Type) GuessClass() TypeClass {
 	case EventRedaction.Type, EventMessage.Type, EventEncrypted.Type, EventReaction.Type, EventSticker.Type,
 		InRoomVerificationStart.Type, InRoomVerificationReady.Type, InRoomVerificationAccept.Type,
 		InRoomVerificationKey.Type, InRoomVerificationMAC.Type, InRoomVerificationCancel.Type,
-		CallInvite.Type, CallCandidates.Type, CallAnswer.Type, CallReject.Type, CallSelectAnswer.Type,
-		CallNegotiate.Type, CallHangup.Type, BeeperMessageStatus.Type:
+		BeeperMessageStatus.Type:
 		return MessageEventType
-	case FocusCallTrackSubscription.Type, FocusCallNegotiate.Type, FocusCallSDPStreamMetadataChanged.Type, FocusCallPing.Type,
-		FocusCallPong.Type:
-		return FocusEventType
-	case ToDeviceRoomKey.Type, ToDeviceRoomKeyRequest.Type, ToDeviceForwardedRoomKey.Type, ToDeviceRoomKeyWithheld.Type:
+	case ToDeviceRoomKey.Type, ToDeviceRoomKeyRequest.Type, ToDeviceForwardedRoomKey.Type, ToDeviceRoomKeyWithheld.Type,
+		ToDeviceCallInvite.Type, ToDeviceCallCandidates.Type, ToDeviceCallSelectAnswer.Type, ToDeviceCallNegotiate.Type,
+		ToDeviceCallTrackSubscription.Type, ToDeviceCallTrackAdvertise.Type, ToDeviceCallPing.Type, ToDeviceCallPong.Type,
+		ToDeviceCallHangup.Type:
 		return ToDeviceEventType
 	default:
 		return UnknownEventType
@@ -215,14 +196,6 @@ var (
 	InRoomVerificationMAC    = Type{"m.key.verification.mac", MessageEventType}
 	InRoomVerificationCancel = Type{"m.key.verification.cancel", MessageEventType}
 
-	CallInvite       = Type{"m.call.invite", MessageEventType}
-	CallCandidates   = Type{"m.call.candidates", MessageEventType}
-	CallAnswer       = Type{"m.call.answer", MessageEventType}
-	CallReject       = Type{"m.call.reject", MessageEventType}
-	CallSelectAnswer = Type{"m.call.select_answer", MessageEventType}
-	CallNegotiate    = Type{"m.call.negotiate", MessageEventType}
-	CallHangup       = Type{"m.call.hangup", MessageEventType}
-
 	BeeperMessageStatus = Type{"com.beeper.message_send_status", MessageEventType}
 )
 
@@ -265,20 +238,13 @@ var (
 
 	ToDeviceOrgMatrixRoomKeyWithheld = Type{"org.matrix.room_key.withheld", ToDeviceEventType}
 
-	ToDeviceCallInvite       = Type{"m.call.invite", ToDeviceEventType}
-	ToDeviceCallCandidates   = Type{"m.call.candidates", ToDeviceEventType}
-	ToDeviceCallAnswer       = Type{"m.call.answer", ToDeviceEventType}
-	ToDeviceCallReject       = Type{"m.call.reject", ToDeviceEventType}
-	ToDeviceCallSelectAnswer = Type{"m.call.select_answer", ToDeviceEventType}
-	ToDeviceCallNegotiate    = Type{"m.call.negotiate", ToDeviceEventType}
-	ToDeviceCallHangup       = Type{"m.call.hangup", ToDeviceEventType}
-)
-
-// Focus events
-var (
-	FocusCallTrackSubscription        = Type{"m.call.track_subscription", FocusEventType}
-	FocusCallNegotiate                = Type{"m.call.negotiate", FocusEventType}
-	FocusCallSDPStreamMetadataChanged = Type{"m.call.sdp_stream_metadata_changed", FocusEventType}
-	FocusCallPing                     = Type{"m.call.ping", FocusEventType}
-	FocusCallPong                     = Type{"m.call.pong", FocusEventType}
+	ToDeviceCallInvite            = Type{"m.call.invite", ToDeviceEventType}
+	ToDeviceCallCandidates        = Type{"m.call.candidates", ToDeviceEventType}
+	ToDeviceCallSelectAnswer      = Type{"m.call.select_answer", ToDeviceEventType}
+	ToDeviceCallNegotiate         = Type{"m.call.negotiate", ToDeviceEventType}
+	ToDeviceCallTrackSubscription = Type{"m.call.subscription", ToDeviceEventType}
+	ToDeviceCallTrackAdvertise    = Type{"m.call.advertise", ToDeviceEventType}
+	ToDeviceCallPing              = Type{"m.call.ping", ToDeviceEventType}
+	ToDeviceCallPong              = Type{"m.call.pong", ToDeviceEventType}
+	ToDeviceCallHangup            = Type{"m.call.hangup", ToDeviceEventType}
 )

@@ -25,17 +25,12 @@ const (
 	CallHangupUnknownError     CallHangupReason = "unknown_error"
 )
 
-type CallDataType string
+type CallSDPType string
 
 const (
-	CallDataTypeOffer  CallDataType = "offer"
-	CallDataTypeAnswer CallDataType = "answer"
+	CallSDPTypeOffer  CallSDPType = "offer"
+	CallSDPTypeAnswer CallSDPType = "answer"
 )
-
-type CallData struct {
-	SDP  string       `json:"sdp"`
-	Type CallDataType `json:"type"`
-}
 
 type CallCandidate struct {
 	Candidate     string `json:"candidate"`
@@ -86,52 +81,53 @@ type BaseCallEventContent struct {
 	SenderSessionID id.SessionID `json:"sender_session_id"`
 }
 
-type CallSDPStreamMetadataPurpose string
+type CallTrackGroupPurpose string
 
 const (
-	Usermedia   CallSDPStreamMetadataPurpose = "m.usermedia"
-	Screenshare CallSDPStreamMetadataPurpose = "m.screenshare"
+	CallTrackGroupPurposeUserMedia   CallTrackGroupPurpose = "m.usermedia"
+	CallTrackGroupPurposeScreenShare CallTrackGroupPurpose = "m.screenshare"
 )
 
-type CallSDPStreamMetadataTrack struct {
-	Kind   string `json:"kind,omitempty"`
-	Width  int    `json:"width,omitempty"`
-	Height int    `json:"height,omitempty"`
+type CallTrack struct {
+	Kind   string           `json:"kind,omitempty"`
+	Muted  bool             `json:"muted,omitempty"`
+	Mid    int              `json:"mid,omitempty"`
+	Layers []CallTrackLayer `json:"layers,omitempty"`
 }
 
-type CallSDPStreamMetadataTracks map[string]CallSDPStreamMetadataTrack
-
-type CallSDPStreamMetadataObject struct {
-	UserID     id.UserID                    `json:"user_id"`
-	DeviceID   id.DeviceID                  `json:"device_id"`
-	Purpose    CallSDPStreamMetadataPurpose `json:"purpose"`
-	AudioMuted bool                         `json:"audio_muted"`
-	VideoMuted bool                         `json:"video_muted"`
-	Tracks     CallSDPStreamMetadataTracks  `json:"tracks"`
+type CallTrackLayer struct {
+	Width   int              `json:"width,omitempty"`
+	Height  int              `json:"height,omitempty"`
+	SSRC    int              `json:"ssrc,omitempty"`
+	Bitrate int              `json:"bitrate,omitempty"`
+	Quality CallTrackQuality `json:"quality,omitempty"`
 }
 
-type CallSDPStreamMetadata map[string]CallSDPStreamMetadataObject
+type CallTrackQuality string
 
-type CallInviteEventContent struct {
-	BaseCallEventContent
-	Lifetime          int                   `json:"lifetime"`
-	Offer             CallData              `json:"offer"`
-	SDPStreamMetadata CallSDPStreamMetadata `json:"org.matrix.msc3077.sdp_stream_metadata"`
+const (
+	CallTrackQualityOff    CallTrackQuality = "off"
+	CallTrackQualityHigh   CallTrackQuality = "high"
+	CallTrackQualityMedium CallTrackQuality = "medium"
+	CallTrackQualityLow    CallTrackQuality = "low"
+)
+
+type CallTrackID string
+
+type CallTrackGroupID string
+
+type CallTrackGroup struct {
+	UserID   id.UserID                 `json:"user_id"`
+	DeviceID id.DeviceID               `json:"device_id"`
+	Purpose  CallTrackGroupPurpose     `json:"purpose"`
+	Tracks   map[CallTrackID]CallTrack `json:"tracks"`
 }
+
+type CallInviteEventContent CallNegotiateEventContent
 
 type CallCandidatesEventContent struct {
 	BaseCallEventContent
 	Candidates []CallCandidate `json:"candidates"`
-}
-
-type CallRejectEventContent struct {
-	BaseCallEventContent
-}
-
-type CallAnswerEventContent struct {
-	BaseCallEventContent
-	Answer            CallData              `json:"answer"`
-	SDPStreamMetadata CallSDPStreamMetadata `json:"org.matrix.msc3077.sdp_stream_metadata"`
 }
 
 type CallSelectAnswerEventContent struct {
@@ -141,9 +137,14 @@ type CallSelectAnswerEventContent struct {
 
 type CallNegotiateEventContent struct {
 	BaseCallEventContent
-	Lifetime          int                   `json:"lifetime"`
-	Description       CallData              `json:"description"`
-	SDPStreamMetadata CallSDPStreamMetadata `json:"org.matrix.msc3077.sdp_stream_metadata"`
+	Lifetime  int               `json:"lifetime"`
+	Negotiate CallNegotiateBody `json:"negotiate"`
+}
+
+type CallNegotiateBody struct {
+	SDP         string                              `json:"sdp"`
+	Type        CallSDPType                         `json:"type"`
+	TrackGroups map[CallTrackGroupID]CallTrackGroup `json:"track_groups"`
 }
 
 type CallHangupEventContent struct {
@@ -151,27 +152,22 @@ type CallHangupEventContent struct {
 	Reason CallHangupReason `json:"reason"`
 }
 
-type FocusTrackDescription struct {
-	StreamID string `json:"stream_id"`
-	TrackID  string `json:"track_id"`
-	Width    int    `json:"width,omitempty"`
-	Height   int    `json:"height,omitempty"`
+type CallSubscriptionEventContent struct {
+	BaseCallEventContent
+	Subscribe   []CallTrackRequest `json:"subscribe"`
+	Unsubscribe []CallTrackRequest `json:"unsubscribe"`
 }
 
-type FocusCallTrackSubscriptionEventContent struct {
-	Subscribe   []FocusTrackDescription `json:"subscribe"`
-	Unsubscribe []FocusTrackDescription `json:"unsubscribe"`
+type CallTrackRequest struct {
+	TrackID CallTrackID `json:"track_id"`
+	Width   int         `json:"width,omitempty"`
+	Height  int         `json:"height,omitempty"`
 }
 
-type FocusCallNegotiateEventContent struct {
-	Description       CallData              `json:"description"`
-	SDPStreamMetadata CallSDPStreamMetadata `json:"sdp_stream_metadata"`
+type CallTrackAdvertiseEventContent struct {
+	BaseCallEventContent
+	TrackGroups map[CallTrackGroupID]CallTrackGroup `json:"track_groups"`
 }
 
-type FocusCallSDPStreamMetadataChangedEventContent struct {
-	SDPStreamMetadata CallSDPStreamMetadata `json:"sdp_stream_metadata"`
-}
-
-type FocusCallPingEventContent struct{}
-
-type FocusCallPongEventContent struct{}
+type CallPingEventContent struct{}
+type CallPongEventContent struct{}
