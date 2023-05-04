@@ -40,10 +40,9 @@ const (
 )
 
 type CallCandidate struct {
-	Candidate     string           `json:"candidate"`
-	SDPMLineIndex int              `json:"sdpMLineIndex"`
-	SDPMID        string           `json:"sdpMid"`
-	Direction     CallICEDirection `json:"direction"`
+	Candidate     string `json:"candidate"`
+	SDPMLineIndex int    `json:"sdpMLineIndex"`
+	SDPMID        string `json:"sdpMid"`
 }
 
 type CallVersion string
@@ -127,7 +126,8 @@ type CallInviteEventContent CallNegotiateEventContent
 
 type CallCandidatesEventContent struct {
 	BaseCallEventContent
-	Candidates []CallCandidate `json:"candidates"`
+	Candidates []CallCandidate  `json:"candidates"`
+	Direction  CallICEDirection `json:"direction"`
 }
 
 type CallSelectAnswerEventContent struct {
