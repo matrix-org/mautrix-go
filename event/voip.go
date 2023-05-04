@@ -32,10 +32,18 @@ const (
 	CallSDPTypeAnswer CallSDPType = "answer"
 )
 
+type CallICEDirection string
+
+const (
+	CallICEDirectionPublisher  CallICEDirection = "publiher"
+	CallICEDirectionSubscriber CallICEDirection = "subscriber"
+)
+
 type CallCandidate struct {
-	Candidate     string `json:"candidate"`
-	SDPMLineIndex int    `json:"sdpMLineIndex"`
-	SDPMID        string `json:"sdpMid"`
+	Candidate     string           `json:"candidate"`
+	SDPMLineIndex int              `json:"sdpMLineIndex"`
+	SDPMID        string           `json:"sdpMid"`
+	Direction     CallICEDirection `json:"direction"`
 }
 
 type CallVersion string
