@@ -81,18 +81,19 @@ type BaseCallEventContent struct {
 	SenderSessionID id.SessionID `json:"sender_session_id"`
 }
 
-type CallTrackGroupPurpose string
+type CallTrackPurpose string
 
 const (
-	CallTrackGroupPurposeUserMedia   CallTrackGroupPurpose = "m.usermedia"
-	CallTrackGroupPurposeScreenShare CallTrackGroupPurpose = "m.screenshare"
+	CallTrackPurposeUserMedia   CallTrackPurpose = "m.usermedia"
+	CallTrackPurposeScreenShare CallTrackPurpose = "m.screenshare"
 )
 
 type CallTrack struct {
-	Kind   string           `json:"kind,omitempty"`
-	Muted  bool             `json:"muted,omitempty"`
-	Mid    int              `json:"mid,omitempty"`
-	Layers []CallTrackLayer `json:"layers,omitempty"`
+	Kind    string           `json:"kind,omitempty"`
+	Muted   bool             `json:"muted,omitempty"`
+	Mid     int              `json:"mid,omitempty"`
+	Layers  []CallTrackLayer `json:"layers,omitempty"`
+	Purpose CallTrackPurpose `json:"purpose"`
 }
 
 type CallTrackLayer struct {
@@ -114,15 +115,6 @@ const (
 
 type CallTrackID string
 
-type CallTrackGroupID string
-
-type CallTrackGroup struct {
-	UserID   id.UserID                 `json:"user_id"`
-	DeviceID id.DeviceID               `json:"device_id"`
-	Purpose  CallTrackGroupPurpose     `json:"purpose"`
-	Tracks   map[CallTrackID]CallTrack `json:"tracks"`
-}
-
 type CallInviteEventContent CallNegotiateEventContent
 
 type CallCandidatesEventContent struct {
@@ -142,9 +134,9 @@ type CallNegotiateEventContent struct {
 }
 
 type CallNegotiateBody struct {
-	SDP         string                              `json:"sdp"`
-	Type        CallSDPType                         `json:"type"`
-	TrackGroups map[CallTrackGroupID]CallTrackGroup `json:"track_groups"`
+	SDP    string                    `json:"sdp"`
+	Type   CallSDPType               `json:"type"`
+	Tracks map[CallTrackID]CallTrack `json:"tracks"`
 }
 
 type CallHangupEventContent struct {
@@ -164,9 +156,19 @@ type CallTrackRequest struct {
 	Height  int         `json:"height,omitempty"`
 }
 
+type CallTrackOwner struct {
+	UserID   id.UserID   `json:"user_id"`
+	DeviceID id.DeviceID `json:"device_id"`
+}
+
 type CallTrackAdvertiseEventContent struct {
 	BaseCallEventContent
-	TrackGroups map[CallTrackGroupID]CallTrackGroup `json:"track_groups"`
+	UserTracks map[CallTrackOwner]map[CallTrackID]CallTrack `json:"tracks"`
+}
+
+type CallTrackUpdateEventContent struct {
+	BaseCallEventContent
+	Tracks map[CallTrackID]CallTrack `json:"tracks"`
 }
 
 type CallPingEventContent struct{}

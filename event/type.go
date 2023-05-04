@@ -115,8 +115,8 @@ func (et *Type) GuessClass() TypeClass {
 		return MessageEventType
 	case ToDeviceRoomKey.Type, ToDeviceRoomKeyRequest.Type, ToDeviceForwardedRoomKey.Type, ToDeviceRoomKeyWithheld.Type,
 		ToDeviceCallInvite.Type, ToDeviceCallCandidates.Type, ToDeviceCallSelectAnswer.Type, ToDeviceCallNegotiate.Type,
-		ToDeviceCallTrackSubscription.Type, ToDeviceCallTrackAdvertise.Type, ToDeviceCallPing.Type, ToDeviceCallPong.Type,
-		ToDeviceCallHangup.Type:
+		ToDeviceCallTrackSubscription.Type, ToDeviceCallTrackAdvertise.Type, ToDeviceCallTrackUpdate.Type,
+		ToDeviceCallPing.Type, ToDeviceCallPong.Type, ToDeviceCallHangup.Type:
 		return ToDeviceEventType
 	default:
 		return UnknownEventType
@@ -244,6 +244,7 @@ var (
 	ToDeviceCallNegotiate         = Type{"m.call.negotiate", ToDeviceEventType}
 	ToDeviceCallTrackSubscription = Type{"m.call.subscription", ToDeviceEventType}
 	ToDeviceCallTrackAdvertise    = Type{"m.call.advertise", ToDeviceEventType}
+	ToDeviceCallTrackUpdate       = Type{"m.call.track_update", ToDeviceEventType}
 	ToDeviceCallPing              = Type{"m.call.ping", ToDeviceEventType}
 	ToDeviceCallPong              = Type{"m.call.pong", ToDeviceEventType}
 	ToDeviceCallHangup            = Type{"m.call.hangup", ToDeviceEventType}

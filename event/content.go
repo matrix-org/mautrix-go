@@ -86,6 +86,7 @@ var TypeMap = map[Type]reflect.Type{
 	ToDeviceCallNegotiate:         reflect.TypeOf(CallNegotiateEventContent{}),      // SDP offer/answer
 	ToDeviceCallTrackSubscription: reflect.TypeOf(CallSubscriptionEventContent{}),   // subscribe/unsubscribe
 	ToDeviceCallTrackAdvertise:    reflect.TypeOf(CallTrackAdvertiseEventContent{}), // advertise available tracks to others
+	ToDeviceCallTrackUpdate:       reflect.TypeOf(CallTrackUpdateEventContent{}),    // update track state (muted/unmuted etc)
 	ToDeviceCallPing:              reflect.TypeOf(CallPingEventContent{}),           // ping
 	ToDeviceCallPong:              reflect.TypeOf(CallPongEventContent{}),           // pong
 	ToDeviceCallHangup:            reflect.TypeOf(CallHangupEventContent{}),         // end an initiated call
@@ -488,6 +489,13 @@ func (content *Content) AsCallTrackAdvertise() *CallTrackAdvertiseEventContent {
 	casted, ok := content.Parsed.(*CallTrackAdvertiseEventContent)
 	if !ok {
 		return &CallTrackAdvertiseEventContent{}
+	}
+	return casted
+}
+func (content *Content) AsCallTrackUpdate() *CallTrackUpdateEventContent {
+	casted, ok := content.Parsed.(*CallTrackUpdateEventContent)
+	if !ok {
+		return &CallTrackUpdateEventContent{}
 	}
 	return casted
 }
